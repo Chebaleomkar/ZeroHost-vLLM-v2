@@ -2,7 +2,7 @@
 
 One session runs every mode in MODES back to back on the same machine, benchmarks each one
 through the load-balancing proxy with `vllm bench serve`, writes comparison.{json,md}, then
-serves SERVE_MODE publicly through the ngrok static domain.
+serves SERVE_MODE (tp) publicly through the ngrok static domain.
 
   single : one vLLM on GPU 0                          (v1 baseline, 16 slots)
   dp     : one vLLM per GPU, proxy load-balances       (2 x 16 slots)
@@ -30,8 +30,8 @@ SERVED_NAME = "qwen2.5-7b-instruct"
 VLLM_SPEC = "vllm==0.30.0"  # verified on Kaggle T4, driver 580 / CUDA 13.0
 PROXY_PORT = 8000
 DATA_DIR = "/kaggle/working/zerohost"
-MODES = ["single", "tp", "dp"]  # dp last: it keeps running as the served mode, no reload
-SERVE_MODE = "dp"
+MODES = ["single", "dp", "tp"]  # served mode last so it keeps running without a reload
+SERVE_MODE = "tp"  # won the first comparison: ~2x single at 32 concurrent, 1.8x faster per user
 ENGINES = {  # per mode: one entry per vLLM process
     "single": [{"gpus": "0", "port": 8001, "tp": 1, "max_num_seqs": 16}],
     "dp": [{"gpus": "0", "port": 8001, "tp": 1, "max_num_seqs": 16},
