@@ -6,7 +6,7 @@ kernel-metadata.json
 run_data/
 results/
 *.log
-!data/vllm.log
+!data/logs/*.log
 
 __pycache__/
 *.pyc
